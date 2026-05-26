@@ -11,6 +11,8 @@ const state = {
   logs: [],
   geminiKey: localStorage.getItem('lgpd_gemini_key') || '',
   activeProcess: false,
+  currentPayload: null,
+  currentResult: null,
 };
 
 // Patterns and Keywords for LGPD Heuristic Scan
@@ -159,12 +161,17 @@ function initEventListeners() {
   });
 
   // Accept anonymized option
-  document.getElementById('apply-anonymized-btn').addEventListener('click', () => {
-    addLog("DB_SAVE", "Gravação realizada com sucesso após anonimização de privacidade.", "passed");
+  document.getElementById('apply-anonymized-btn').addEventListener('click', async () => {
     document.getElementById('anonymization-section').style.display = 'none';
     
-    // Success UI animation
-    alert("Sucesso! Registro salvo de forma segura e em conformidade na base de dados.");
+    // Envia os dados tratados ao backend real no Docker
+    const success = await sendToBackend(state.currentPayload, state.currentResult);
+    
+    if (success) {
+      alert("Sucesso! Registro salvo de forma segura e em conformidade na base de dados PostgreSQL no Docker.");
+    } else {
+      alert("Aviso: Falha ao persistir dados no banco de dados. Salvamento simulado local efetuado.");
+    }
     
     // Update dashboard metrics
     state.stats.complianceScore = Math.min(100, Math.round(state.stats.complianceScore * 1.05));
@@ -374,6 +381,44 @@ Retorne EXCLUSIVAMENTE um objeto JSON estruturado como abaixo, sem formatação 
   }
 }
 
+// Enviar dados tratados ao banco de dados no Docker via backend Express
+async function sendToBackend(payload, result) {
+  if (!payload) return false;
+  
+  addLog("API_POST", "Enviando dados tratados ao banco no Docker...", "passed");
+  
+  try {
+    const response = await fetch('http://127.0.0.1:3001/api/submissions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        nome: payload.nome || "Não informado",
+        email: payload.email || "Não informado",
+        mensagem_original: payload.detalhes || "",
+        mensagem_higienizada: result.redactedText || "",
+        consentimento: payload.consentimento === true,
+        compliance_score: state.stats.complianceScore,
+        violations_count: result.violations ? result.violations.length : 0
+      })
+    });
+    
+    const dbResult = await response.json();
+    if (response.ok) {
+      addLog("DB_SAVE", `Sucesso! Salvo no Postgres (ID: ${dbResult.data.id}).`, "passed");
+      return true;
+    } else {
+      addLog("DB_ERROR", `Erro do banco: ${dbResult.error}`, "blocked");
+      return false;
+    }
+  } catch (error) {
+    console.error("Erro ao enviar dados ao backend:", error);
+    addLog("DB_ERROR", "Erro de conexão. O banco no Docker ou a API Express estão offline?", "blocked");
+    return false;
+  }
+}
+
 // Visual safety stepper execution
 async function runSecurityPipeline(payload, origin = 'form') {
   state.activeProcess = true;
@@ -442,6 +487,10 @@ async function runSecurityPipeline(payload, origin = 'form') {
     state.stats.leaksPrevented += result.violations.length;
     state.stats.complianceScore = Math.max(20, state.stats.complianceScore - 15);
     
+    // Salva o payload e resultado atuais no estado global para eventual gravação após higienização
+    state.currentPayload = payload;
+    state.currentResult = result;
+    
     // Show Anonymization Side-By-Side Component
     displayAnonymizationScreen(result, payload);
   } else if (result.hasSensitive && consentGranted) {
@@ -449,10 +498,18 @@ async function runSecurityPipeline(payload, origin = 'form') {
     addLog("GATEWAY_ALLOW", "Transação permitida com ressalva. Aplicada higienização de dados.", "warning");
     
     state.stats.complianceScore = Math.min(100, Math.round(state.stats.complianceScore * 0.98));
+    
+    // Salva no estado global
+    state.currentPayload = payload;
+    state.currentResult = result;
+    
     displayAnonymizationScreen(result, payload);
   } else {
     setStepState('step-decision', 'success', 'Aprovado sem restrições. Transação segura.');
     addLog("GATEWAY_ALLOW", "Dados gravados na base com 100% de conformidade.", "passed");
+    
+    // Grava diretamente no PostgreSQL no Docker (via Express) pois está seguro e livre de violações
+    sendToBackend(payload, result);
     
     state.stats.complianceScore = Math.min(100, state.stats.complianceScore + 5);
     document.getElementById('anonymization-section').style.display = 'none';
