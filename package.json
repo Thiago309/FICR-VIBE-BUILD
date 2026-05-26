@@ -1,0 +1,17 @@
+{
+  "name": "lgpd-shield-ai",
+  "version": "1.0.0",
+  "description": "Monitor Inteligente de LGPD e Privacidade em Formulários",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx -y http-server -p 3000 -o"
+  },
+  "keywords": [
+    "lgpd",
+    "privacy",
+    "ai",
+    "governance"
+  ],
+  "author": "",
+  "license": "MIT"
+}
