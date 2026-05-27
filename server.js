@@ -38,13 +38,35 @@ const pool = new Pool({
   ssl: isLocal ? false : { rejectUnauthorized: false }
 });
 
-// Test DB Connection
+// Test DB Connection & Auto-Migration
 pool.connect((err, client, release) => {
   if (err) {
     return console.error('Erro ao conectar ao PostgreSQL:', err.stack);
   }
   console.log('Conexão com o banco de dados PostgreSQL estabelecida com sucesso!');
-  release();
+  
+  // Criar tabela 'submissions' se ela não existir (auto-migration)
+  const createTableQuery = `
+    CREATE TABLE IF NOT EXISTS submissions (
+        id SERIAL PRIMARY KEY,
+        nome VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        mensagem_original TEXT NOT NULL,
+        mensagem_higienizada TEXT NOT NULL,
+        consentimento BOOLEAN NOT NULL DEFAULT FALSE,
+        compliance_score INT NOT NULL,
+        violations_count INT NOT NULL DEFAULT 0,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    );
+  `;
+  
+  client.query(createTableQuery, (tableErr, result) => {
+    release();
+    if (tableErr) {
+      return console.error('Erro ao criar/verificar tabela submissions:', tableErr.stack);
+    }
+    console.log('Tabela "submissions" verificada/criada com sucesso no banco de dados!');
+  });
 });
 
 // Routes
