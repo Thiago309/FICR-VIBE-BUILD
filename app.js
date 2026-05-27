@@ -37,8 +37,8 @@ const SCAN_RULES = {
   },
   health: {
     keywords: [
-      "diabetes", "hipertensão", "asma", "doença", "exame", "médico", "saúde", 
-      "sangue", "cardíaco", "hiv", "soropositivo", "câncer", "depressão", 
+      "diabetes", "hipertensão", "asma", "doença", "exame", "médico", "saúde",
+      "sangue", "cardíaco", "hiv", "soropositivo", "câncer", "depressão",
       "ansiedade", "remédio", "receita médica", "prontuário", "tratamento de saúde"
     ],
     label: "Informação Sensível de Saúde",
@@ -47,7 +47,7 @@ const SCAN_RULES = {
   },
   sensitive_general: {
     keywords: [
-      "religião", "católico", "umbanda", "evangélico", "sindicato", 
+      "religião", "católico", "umbanda", "evangélico", "sindicato",
       "partido político", "filiado", "orientação sexual", "homossexual", "heterossexual"
     ],
     label: "Dado Sensível (Opinião/Religião/Sindicato)",
@@ -76,7 +76,7 @@ function loadSavedState() {
   if (savedStats) {
     state.stats = JSON.parse(savedStats);
   }
-  
+
   if (state.geminiKey) {
     document.getElementById('gemini-key').value = state.geminiKey;
     document.getElementById('key-status').innerHTML = '<i class="fa-solid fa-circle-check" style="color: var(--color-success);"></i> API Gemini ativa para análise generativa profunda.';
@@ -102,7 +102,7 @@ function initEventListeners() {
     const key = document.getElementById('gemini-key').value.trim();
     state.geminiKey = key;
     localStorage.setItem('lgpd_gemini_key', key);
-    
+
     const statusLabel = document.getElementById('key-status');
     if (key) {
       statusLabel.innerHTML = '<i class="fa-solid fa-circle-check" style="color: var(--color-success);"></i> API Gemini configurada e pronta.';
@@ -121,7 +121,7 @@ function initEventListeners() {
     document.getElementById('form-email').value = "mariano.souza@provedor.com.br";
     document.getElementById('form-message').value = randomTemplate;
     document.getElementById('form-consent').checked = false;
-    
+
     addLog("SIMULADOR", "Dados de teste carregados com violações potenciais.", "warning");
   });
 
@@ -143,7 +143,7 @@ function initEventListeners() {
   // Run Developer Sandbox
   document.getElementById('run-sandbox-btn').addEventListener('click', () => {
     if (state.activeProcess) return;
-    
+
     const payloadArea = document.getElementById('sandbox-payload');
     try {
       const data = JSON.parse(payloadArea.value);
@@ -163,16 +163,16 @@ function initEventListeners() {
   // Accept anonymized option
   document.getElementById('apply-anonymized-btn').addEventListener('click', async () => {
     document.getElementById('anonymization-section').style.display = 'none';
-    
+
     // Envia os dados tratados ao backend real no Docker
     const success = await sendToBackend(state.currentPayload, state.currentResult);
-    
+
     if (success) {
       alert("Sucesso! Registro salvo de forma segura e em conformidade na base de dados PostgreSQL no Docker.");
     } else {
       alert("Aviso: Falha ao persistir dados no banco de dados. Salvamento simulado local efetuado.");
     }
-    
+
     // Update dashboard metrics
     state.stats.complianceScore = Math.min(100, Math.round(state.stats.complianceScore * 1.05));
     updateUIStats();
@@ -194,7 +194,7 @@ function addLog(tag, message, status = 'passed') {
     </div>
     <span class="event-time">${timeStr}</span>
   `;
-  
+
   loggerBox.insertBefore(logItem, loggerBox.firstChild);
 }
 
@@ -204,7 +204,7 @@ function updateUIStats() {
   document.getElementById('stat-sensitive').innerText = state.stats.sensitiveIntercepted;
   document.getElementById('stat-anonymized').innerText = `${state.stats.anonymizedRate}%`;
   document.getElementById('stat-score').innerText = `${state.stats.complianceScore}%`;
-  
+
   const scoreCard = document.getElementById('stat-score').parentElement;
   if (state.stats.complianceScore >= 90) {
     scoreCard.style.borderLeftColor = 'var(--color-success)';
@@ -213,7 +213,7 @@ function updateUIStats() {
   } else {
     scoreCard.style.borderLeftColor = 'var(--color-danger)';
   }
-  
+
   saveStats();
 }
 
@@ -358,19 +358,19 @@ Retorne EXCLUSIVAMENTE um objeto JSON estruturado como abaixo, sem formatação 
 
     const result = await response.json();
     const resultText = result.candidates[0].content.parts[0].text;
-    
+
     // Clean potential markdown quotes
     const cleanedText = resultText.replace(/```json/g, "").replace(/```/g, "").trim();
     const parsedData = JSON.parse(cleanedText);
-    
+
     // Inject highlights
     let ho = payload.detalhes || "";
     let hs = parsedData.redactedText || "";
-    
+
     parsedData.violations.forEach(v => {
       ho = ho.replace(v.leak, `<span class="highlight-redacted">${v.leak}</span>`);
     });
-    
+
     parsedData.highlightOriginal = ho;
     parsedData.highlightSanitized = hs;
     return parsedData;
@@ -384,11 +384,11 @@ Retorne EXCLUSIVAMENTE um objeto JSON estruturado como abaixo, sem formatação 
 // Enviar dados tratados ao banco de dados no Docker via backend Express
 async function sendToBackend(payload, result) {
   if (!payload) return false;
-  
+
   addLog("API_POST", "Enviando dados tratados ao banco no Docker...", "passed");
-  
+
   try {
-    const response = await fetch('http://127.0.0.1:3001/api/submissions', {
+    const response = await fetch('/api/submissions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -403,7 +403,7 @@ async function sendToBackend(payload, result) {
         violations_count: result.violations ? result.violations.length : 0
       })
     });
-    
+
     const dbResult = await response.json();
     if (response.ok) {
       addLog("DB_SAVE", `Sucesso! Salvo no Postgres (ID: ${dbResult.data.id}).`, "passed");
@@ -423,7 +423,7 @@ async function sendToBackend(payload, result) {
 async function runSecurityPipeline(payload, origin = 'form') {
   state.activeProcess = true;
   resetStepperUI();
-  
+
   // Disable button to prevent spamming
   const submitBtn = origin === 'form' ? document.getElementById('submit-form-btn') : document.getElementById('run-sandbox-btn');
   const originalBtnHTML = submitBtn.innerHTML;
@@ -439,7 +439,7 @@ async function runSecurityPipeline(payload, origin = 'form') {
   // Section 2: Sensitivity Scan
   setStepState('step-scan', 'active', 'Analisando conformidade de governança de dados...');
   await delay(850);
-  
+
   let result;
   if (state.geminiKey) {
     addLog("GATEWAY", "Enviando dados para o modelo gerador Gemini AI...", "passed");
@@ -483,41 +483,41 @@ async function runSecurityPipeline(payload, origin = 'form') {
   if (blockRequired) {
     setStepState('step-decision', 'error', 'Submissão Bloqueada (Artigos 5º e 11º da LGPD)');
     addLog("GATEWAY_BLOCK", "Transação abortada pelo gateway para evitar multa regulatória.", "blocked");
-    
+
     state.stats.leaksPrevented += result.violations.length;
     state.stats.complianceScore = Math.max(20, state.stats.complianceScore - 15);
-    
+
     // Salva o payload e resultado atuais no estado global para eventual gravação após higienização
     state.currentPayload = payload;
     state.currentResult = result;
-    
+
     // Show Anonymization Side-By-Side Component
     displayAnonymizationScreen(result, payload);
   } else if (result.hasSensitive && consentGranted) {
     setStepState('step-decision', 'warning', 'Aprovado com Ressalvas (Minimização sugerida)');
     addLog("GATEWAY_ALLOW", "Transação permitida com ressalva. Aplicada higienização de dados.", "warning");
-    
+
     state.stats.complianceScore = Math.min(100, Math.round(state.stats.complianceScore * 0.98));
-    
+
     // Salva no estado global
     state.currentPayload = payload;
     state.currentResult = result;
-    
+
     displayAnonymizationScreen(result, payload);
   } else {
     setStepState('step-decision', 'success', 'Aprovado sem restrições. Transação segura.');
     addLog("GATEWAY_ALLOW", "Dados gravados na base com 100% de conformidade.", "passed");
-    
+
     // Grava diretamente no PostgreSQL no Docker (via Express) pois está seguro e livre de violações
     sendToBackend(payload, result);
-    
+
     state.stats.complianceScore = Math.min(100, state.stats.complianceScore + 5);
     document.getElementById('anonymization-section').style.display = 'none';
   }
 
   // Update stats
   updateUIStats();
-  
+
   // Re-enable trigger button
   submitBtn.disabled = false;
   submitBtn.innerHTML = originalBtnHTML;
@@ -540,7 +540,7 @@ function displayAnonymizationScreen(result, originalPayload) {
 function setStepState(stepId, stateClass, desc) {
   const card = document.getElementById(stepId);
   card.className = `step-card ${stateClass}`;
-  
+
   const descEl = document.getElementById(`desc-${stepId.split('-')[1]}`);
   descEl.innerText = desc;
 }
@@ -552,7 +552,7 @@ function resetStepperUI() {
     const card = document.getElementById(step);
     card.className = 'step-card';
   });
-  
+
   document.getElementById('desc-intercept').innerText = 'Aguardando submissão de dados...';
   document.getElementById('desc-scan').innerText = 'Varrendo campos em busca de dados sensíveis ocultos.';
   document.getElementById('desc-consent').innerText = 'Cruzando dados interceptados com permissões de tratamento.';
