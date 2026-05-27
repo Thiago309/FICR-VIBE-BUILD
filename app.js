@@ -384,11 +384,16 @@ Retorne EXCLUSIVAMENTE um objeto JSON estruturado como abaixo, sem formatação 
 // Enviar dados tratados ao banco de dados no Docker via backend Express
 async function sendToBackend(payload, result) {
   if (!payload) return false;
-
-  addLog("API_POST", "Enviando dados tratados ao banco no Docker...", "passed");
-
+  
+  addLog("API_POST", "Enviando dados tratados ao banco...", "passed");
+  
+  // Helper para descobrir URL base da API dinamicamente (local vs nuvem/Render)
+  const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? (window.location.port === '3000' ? 'http://127.0.0.1:3001' : '')
+    : '';
+  
   try {
-    const response = await fetch('/api/submissions', {
+    const response = await fetch(`${API_BASE_URL}/api/submissions`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
