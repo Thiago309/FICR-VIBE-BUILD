@@ -419,7 +419,7 @@ async function sendToBackend(payload, result) {
     }
   } catch (error) {
     console.error("Erro ao enviar dados ao backend:", error);
-    addLog("DB_ERROR", "Erro de conexão. O banco no Docker ou a API Express estão offline?", "blocked");
+    addLog("DB_ERROR", `Falha de Conexão: ${error.message || error}`, "blocked");
     return false;
   }
 }
