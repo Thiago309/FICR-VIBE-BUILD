@@ -21,18 +21,15 @@ const isConnectionString = host.startsWith('postgresql://') || host.startsWith('
 let connectionString = process.env.DATABASE_URL;
 let isLocal = false;
 
-// O Render usa hosts internos privados começando com 'dpg-' que não necessitam de SSL
-const isRenderInternal = host.startsWith('dpg-') && !host.includes('.');
-
 if (connectionString) {
-  isLocal = connectionString.includes('localhost') || connectionString.includes('127.0.0.1') || connectionString.includes('dpg-');
+  isLocal = connectionString.includes('localhost') || connectionString.includes('127.0.0.1');
 } else {
   if (isConnectionString) {
     connectionString = host;
-    isLocal = host.includes('localhost') || host.includes('127.0.0.1') || host.includes('dpg-');
+    isLocal = host.includes('localhost') || host.includes('127.0.0.1');
   } else {
     connectionString = `postgresql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${host}:${process.env.DB_PORT || 5432}/${process.env.DB_NAME}`;
-    isLocal = host === 'localhost' || host === '127.0.0.1' || isRenderInternal;
+    isLocal = host === 'localhost' || host === '127.0.0.1';
   }
 }
 

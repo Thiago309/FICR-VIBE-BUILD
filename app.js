@@ -409,14 +409,15 @@ async function sendToBackend(payload, result) {
       })
     });
 
-    const dbResult = await response.json();
-    if (response.ok) {
-      addLog("DB_SAVE", `Sucesso! Salvo no Postgres (ID: ${dbResult.data.id}).`, "passed");
-      return true;
-    } else {
-      addLog("DB_ERROR", `Erro do banco: ${dbResult.error}`, "blocked");
+    if (!response.ok) {
+      const errorText = await response.text();
+      addLog("DB_ERROR", `Erro do Servidor (Status ${response.status}): ${errorText || 'Sem resposta'}`, "blocked");
       return false;
     }
+
+    const dbResult = await response.json();
+    addLog("DB_SAVE", `Sucesso! Salvo no Postgres (ID: ${dbResult.data.id}).`, "passed");
+    return true;
   } catch (error) {
     console.error("Erro ao enviar dados ao backend:", error);
     addLog("DB_ERROR", `Falha de Conexão: ${error.message || error}`, "blocked");
