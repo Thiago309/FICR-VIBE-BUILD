@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,10 +9,11 @@
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
 
   <div class="app-container">
-    
+
     <!-- Top Header -->
     <header class="glass-panel">
       <div class="logo-container">
@@ -23,7 +25,7 @@
           <p>Gateway de Governança em Tempo Real</p>
         </div>
       </div>
-      
+
       <div style="display: flex; align-items: center; gap: 16px;">
         <button class="settings-toggle" id="toggle-settings">
           <i class="fa-solid fa-gear"></i> Configurações API
@@ -41,13 +43,16 @@
         <i class="fa-solid fa-robot" style="color: var(--color-primary);"></i> Configuração do Gemini AI (Opcional)
       </h3>
       <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 16px; line-height: 1.4;">
-        Por padrão, o LGPD Shield AI utiliza uma inteligência heurística local de alto desempenho ideal para demonstrações offline. Se desejar usar inteligência geradora real baseada no Gemini, insira sua chave de API abaixo.
+        Por padrão, o LGPD Shield AI utiliza uma inteligência heurística local de alto desempenho ideal para
+        demonstrações offline. Se desejar usar inteligência geradora real baseada no Gemini, insira sua chave de API
+        abaixo.
       </p>
       <div class="form-group" style="margin-bottom: 0;">
         <label for="gemini-key">Gemini API Key</label>
         <div style="display: flex; gap: 12px;">
           <input type="password" id="gemini-key" placeholder="AIzaSy..." style="flex-grow: 1;">
-          <button class="btn btn-secondary" id="save-settings" style="width: auto; white-space: nowrap; padding: 0 16px;">
+          <button class="btn btn-secondary" id="save-settings"
+            style="width: auto; white-space: nowrap; padding: 0 16px;">
             <i class="fa-solid fa-floppy-disk"></i> Salvar
           </button>
         </div>
@@ -79,17 +84,18 @@
 
     <!-- Main Grid Content -->
     <div class="main-grid">
-      
+
       <!-- Left Column: The Input Forms & Playground -->
       <div class="column">
-        
+
         <!-- Corporate intake form simulator -->
         <div class="glass-panel">
           <div class="panel-header">
             <h2 class="panel-title">
-              <i class="fa-solid fa-file-signature"></i> Portal do Candidato (Intake Simulado)
+              <i class="fa-solid fa-file-signature"></i> Documentos (Upload e Análise)
             </h2>
-            <span style="font-size: 11px; background: rgba(59, 130, 246, 0.1); padding: 4px 8px; border-radius: 4px; color: var(--color-primary); font-weight: 600;">
+            <span
+              style="font-size: 11px; background: rgba(59, 130, 246, 0.1); padding: 4px 8px; border-radius: 4px; color: var(--color-primary); font-weight: 600;">
               SIMULADOR DE INPUT
             </span>
           </div>
@@ -107,15 +113,19 @@
               </div>
 
               <div class="form-group">
-                <label for="form-message">Apresentação Profissional e Histórico Médio/Profissional (Campo Aberto)</label>
-                <textarea id="form-message" placeholder="Dica para testar bloqueios: Insira dados sensíveis aqui, como seu CPF (ex: 123.456.789-00), dados médicos (ex: 'Tenho diabetes tipo 2') ou dados financeiros para ver o gateway de LGPD bloquear a submissão."></textarea>
+                <label for="form-message">Apresentação Profissional e Histórico Médio/Profissional (Campo
+                  Aberto)</label>
+                <textarea id="form-message"
+                  placeholder="Dica para testar bloqueios: Insira dados sensíveis aqui, como seu CPF (ex: 123.456.789-00), dados médicos (ex: 'Tenho diabetes tipo 2') ou dados financeiros para ver o gateway de LGPD bloquear a submissão."></textarea>
               </div>
 
               <!-- Consent checkbox -->
               <div class="checkbox-group">
                 <input type="checkbox" id="form-consent">
                 <div class="checkbox-label">
-                  <strong>Declaração de Consentimento:</strong> Autorizo o tratamento dos dados pessoais fornecidos neste formulário estritamente para a finalidade de recrutamento e seleção, em conformidade com o Artigo 7º, I da LGPD.
+                  <strong>Declaração de Consentimento:</strong> Autorizo o tratamento dos dados pessoais fornecidos
+                  neste formulário estritamente para a finalidade de recrutamento e seleção, em conformidade com o
+                  Artigo 7º, I da LGPD.
                 </div>
               </div>
 
@@ -140,7 +150,8 @@
           </div>
           <div class="panel-body">
             <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.4;">
-              Para salvar a conformidade da requisição sem descartar a submissão por completo, a IA pode anonimizar automaticamente os campos sensíveis não consentidos antes de salvar no banco de dados.
+              Para salvar a conformidade da requisição sem descartar a submissão por completo, a IA pode anonimizar
+              automaticamente os campos sensíveis não consentidos antes de salvar no banco de dados.
             </p>
             <div class="compare-container">
               <div>
@@ -151,9 +162,11 @@
               </div>
               <div>
                 <div class="compare-title">
-                  <i class="fa-solid fa-circle-check" style="color: var(--color-success);"></i> Versão Higienizada (Salva na Base)
+                  <i class="fa-solid fa-circle-check" style="color: var(--color-success);"></i> Versão Higienizada
+                  (Salva na Base)
                 </div>
-                <div class="compare-box" id="compare-sanitized" style="border-color: rgba(16, 185, 129, 0.3);">Nenhum dado processado.</div>
+                <div class="compare-box" id="compare-sanitized" style="border-color: rgba(16, 185, 129, 0.3);">Nenhum
+                  dado processado.</div>
               </div>
             </div>
             <div style="margin-top: 16px; display: flex; justify-content: flex-end;">
@@ -170,7 +183,8 @@
             <h2 class="panel-title">
               <i class="fa-solid fa-code"></i> API Sandbox (Desenvolvedor)
             </h2>
-            <span style="font-size: 11px; background: rgba(255,255,255,0.05); padding: 4px 8px; border-radius: 4px; color: var(--text-secondary); font-family: var(--font-mono);">
+            <span
+              style="font-size: 11px; background: rgba(255,255,255,0.05); padding: 4px 8px; border-radius: 4px; color: var(--text-secondary); font-family: var(--font-mono);">
               POST /api/v1/intake
             </span>
           </div>
@@ -187,7 +201,9 @@
                 </div>
                 <span class="terminal-label">Payload de Entrada</span>
               </div>
-              <textarea id="sandbox-payload" style="height: 160px; font-family: var(--font-mono); background: transparent; border: none; padding: 12px; color: #38bdf8; font-size: 13px; resize: none; width: 100%; box-shadow: none;" spellcheck="false">{
+              <textarea id="sandbox-payload"
+                style="height: 160px; font-family: var(--font-mono); background: transparent; border: none; padding: 12px; color: #38bdf8; font-size: 13px; resize: none; width: 100%; box-shadow: none;"
+                spellcheck="false">{
   "nome": "Carla Santana",
   "email": "carla@saudehoje.com.br",
   "detalhes": "Solicito inscrição. Meu CPF é 987.654.321-00 e meu prontuário médico indica histórico de asma crônica.",
@@ -204,7 +220,7 @@
 
       <!-- Right Column: Safety Pipeline & Logs -->
       <div class="column">
-        
+
         <!-- Safety Pipeline Visualizer -->
         <div class="glass-panel">
           <div class="panel-header">
@@ -214,7 +230,7 @@
           </div>
           <div class="panel-body">
             <div class="stepper-container">
-              
+
               <!-- Step 1: Interception -->
               <div class="step-card" id="step-intercept">
                 <div class="step-icon-wrapper">
@@ -244,7 +260,8 @@
                 </div>
                 <div class="step-details">
                   <span class="step-title">3. Checagem de Termos &amp; Consentimento</span>
-                  <span class="step-desc" id="desc-consent">Cruzando dados interceptados com permissões de tratamento.</span>
+                  <span class="step-desc" id="desc-consent">Cruzando dados interceptados com permissões de
+                    tratamento.</span>
                 </div>
               </div>
 
@@ -255,7 +272,8 @@
                 </div>
                 <div class="step-details">
                   <span class="step-title">4. Decisão de Governança LGPD</span>
-                  <span class="step-desc" id="desc-decision">Aplicando as diretrizes legais e gerando compliance score.</span>
+                  <span class="step-desc" id="desc-decision">Aplicando as diretrizes legais e gerando compliance
+                    score.</span>
                 </div>
               </div>
 
@@ -269,7 +287,8 @@
             <h2 class="panel-title">
               <i class="fa-solid fa-list-ul"></i> Console de Eventos do Gateway
             </h2>
-            <button class="btn btn-secondary" id="clear-logs-btn" style="width: auto; padding: 4px 8px; font-size: 11px;">
+            <button class="btn btn-secondary" id="clear-logs-btn"
+              style="width: auto; padding: 4px 8px; font-size: 11px;">
               <i class="fa-solid fa-trash-can"></i> Limpar
             </button>
           </div>
@@ -287,24 +306,31 @@
         </div>
 
         <!-- LGPD Infographic quick reference -->
-        <div class="glass-panel" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(16, 185, 129, 0.05));">
+        <div class="glass-panel"
+          style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(16, 185, 129, 0.05));">
           <div class="panel-header" style="border: none;">
             <h2 class="panel-title">
               <i class="fa-solid fa-book-open"></i> Guia Rápido de Referência LGPD
             </h2>
           </div>
-          <div class="panel-body" style="padding-top: 0; font-size: 12px; line-height: 1.5; color: var(--text-secondary);">
+          <div class="panel-body"
+            style="padding-top: 0; font-size: 12px; line-height: 1.5; color: var(--text-secondary);">
             <ul style="list-style-type: none; display: flex; flex-direction: column; gap: 10px;">
               <li>
-                <strong style="color: #fff;"><i class="fa-solid fa-circle-info" style="color: var(--color-primary);"></i> Artigo 5º, II (Dado Sensível):</strong>
-                Origem racial ou étnica, convicção religiosa, opinião política, filiação a sindicato, dados de saúde ou vida sexual, dados genéticos ou biométricos.
+                <strong style="color: #fff;"><i class="fa-solid fa-circle-info"
+                    style="color: var(--color-primary);"></i> Artigo 5º, II (Dado Sensível):</strong>
+                Origem racial ou étnica, convicção religiosa, opinião política, filiação a sindicato, dados de saúde ou
+                vida sexual, dados genéticos ou biométricos.
               </li>
               <li>
-                <strong style="color: #fff;"><i class="fa-solid fa-circle-info" style="color: var(--color-warning);"></i> Artigo 7º (Bases Legais):</strong>
-                O tratamento de dados pessoais somente poderá ser realizado mediante consentimento do titular ou para cumprimento de obrigação legal.
+                <strong style="color: #fff;"><i class="fa-solid fa-circle-info"
+                    style="color: var(--color-warning);"></i> Artigo 7º (Bases Legais):</strong>
+                O tratamento de dados pessoais somente poderá ser realizado mediante consentimento do titular ou para
+                cumprimento de obrigação legal.
               </li>
               <li>
-                <strong style="color: #fff;"><i class="fa-solid fa-circle-info" style="color: var(--color-success);"></i> Artigo 11 (Dados Sensíveis):</strong>
+                <strong style="color: #fff;"><i class="fa-solid fa-circle-info"
+                    style="color: var(--color-success);"></i> Artigo 11 (Dados Sensíveis):</strong>
                 Exige consentimento específico e destacado do titular para finalidades específicas.
               </li>
             </ul>
@@ -319,4 +345,5 @@
 
   <script src="app.js?v=1.0.1"></script>
 </body>
+
 </html>
